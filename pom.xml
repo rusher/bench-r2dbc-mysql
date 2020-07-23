@@ -1,0 +1,109 @@
+<project
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.r2dbc</groupId>
+  <artifactId>bench-r2dbc-mysql</artifactId>
+  <version>0.0.1</version>
+  <packaging>jar</packaging>
+
+  <name>bench-r2dbc-mysql</name>
+  <description>R2DBC driver for MariaDB</description>
+
+  <properties>
+    <java.version>1.8</java.version>
+    <jmh.version>1.23</jmh.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <r2dbc-mysql.version>0.8.2.RELEASE</r2dbc-mysql.version>
+<!--    <r2dbc-spi.version>0.8.2.RELEASE</r2dbc-spi.version>-->
+    <reactor.version>Dysprosium-SR9</reactor.version>
+    <uberjar.name>benchmarks</uberjar.name>
+<!--    <netty.version>4.1.49.Final</netty.version>-->
+  </properties>
+
+  <licenses>
+    <license>
+      <name>Apache License 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.projectreactor</groupId>
+        <artifactId>reactor-bom</artifactId>
+        <version>${reactor.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+
+  </dependencyManagement>
+
+  <dependencies>
+<!--    <dependency>-->
+<!--      <groupId>io.r2dbc</groupId>-->
+<!--      <artifactId>r2dbc-spi</artifactId>-->
+<!--      <version>${r2dbc-spi.version}</version>-->
+<!--    </dependency>-->
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+      <version>${jmh.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-generator-annprocess</artifactId>
+      <version>${jmh.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>dev.miku</groupId>
+      <artifactId>r2dbc-mysql</artifactId>
+      <version>${r2dbc-mysql.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <compilerArgs>
+            <arg>-Xlint:all,-options,-path,-processing</arg>
+          </compilerArgs>
+          <showWarnings>true</showWarnings>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <finalName>${uberjar.name}</finalName>
+              <transformers>
+                <transformer
+                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>org.openjdk.jmh.Main</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
